@@ -70,7 +70,8 @@ class Detect(nn.Module):
         if self.training:  # Training path
             return x
         y = self._inference(x)
-        return y if self.export else (y, x)
+        # return y if self.export else (y, x)
+        return y.permute([0,2,1]) if self.export else (y, x) #v5输出层通道顺序
 
     def forward_end2end(self, x):
         """
