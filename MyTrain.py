@@ -27,6 +27,6 @@ if __name__ == "__main__":
     model = YOLO(model_yaml)
     model = YOLO(pre_model, task="detect")
     model.train(data=data_yaml, lr0=0.001,  epochs=500, patience=500, batch=8, imgsz=640, save=True, save_period=50, device="0", workers=0,
-                project='bufeng_yolov8s640', name='v1.0', optimizer='SGD', cos_lr=True, amp=True) 
+                project='./project/bufeng_yolov8s640', name='v1.0', optimizer='SGD', cos_lr=True, amp=True) 
     model.val() 
     
