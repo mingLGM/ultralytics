@@ -65,7 +65,7 @@ def data_set_split(src_data_folder, target_data_folder, train_scale=0.8, val_sca
 
 def file_move(src_data_folder):
     '''
-    读取源数据文件夹(包含image和label)，移动图像和对应标签
+    读取源数据文件夹(包含image和label文件)，移动图像和对应标签
     :param src_data_folder: 源文件夹
     :return:
     '''
@@ -75,6 +75,7 @@ def file_move(src_data_folder):
     # 创建目标文件夹
     os.makedirs(label_folder, exist_ok=True)
     os.makedirs(images_folder, exist_ok=True)
+    num = 0
 
     # 遍历源文件夹中的所有文件
     for file in os.listdir(src_data_folder):
@@ -92,9 +93,10 @@ def file_move(src_data_folder):
             if os.path.exists(jpg_file_path):
                 # 移动jpg文件到images文件夹
                 shutil.move(jpg_file_path, os.path.join(images_folder, jpg_file))
-            # else:
-            #     print(f"警告: 找不到对应的图像文件 {jpg_file}")
-    print("文件移动完成！")
+                num += 1
+            else:
+                print(f"警告: 找不到对应的图像文件 {jpg_file}")
+    print("移动 " + str(num) + " 张图像.")
 
 def split_dataset(source_folder, split_ratio=0.8):
     """
@@ -145,6 +147,42 @@ def split_dataset(source_folder, split_ratio=0.8):
     print(f"数据集划分完成！训练集: {len(train_files)}，测试集: {len(test_files)}")
 
 
+def modify_yolo_labels(label_dir):
+    """
+    将 YOLO 格式的标签文件中的所有类别修改为 0。
+    
+    :param label_dir: str，存放 YOLO 标签的文件夹路径
+    """
+    if not os.path.exists(label_dir):
+        print(f"目录不存在: {label_dir}")
+        return
+    
+    num = 0
+    # 遍历目录中所有 .txt 文件
+    for filename in os.listdir(label_dir):
+        if filename.endswith(".txt"):
+            label_path = os.path.join(label_dir, filename)
+            
+            # 读取原始文件内容
+            with open(label_path, "r") as file:
+                lines = file.readlines()
+            
+            # 修改类别为 0
+            modified_lines = []
+            for line in lines:
+                parts = line.strip().split()
+                if len(parts) > 0:
+                    parts[0] = "0"  # 将类别修改为 0
+                    modified_lines.append(" ".join(parts))
+            
+            # 将修改后的内容写回文件
+            with open(label_path, "w") as file:
+                file.write("\n".join(modified_lines))
+            
+            num += 1
+    print(f"已修改: {num}")
+
+
 if __name__ == '__main__':
     
     # src_data_folder = "zhitong_cls/train_temp"
@@ -152,7 +190,8 @@ if __name__ == '__main__':
     # data_set_split(src_data_folder, target_data_folder)
 
 
-    src_data_folder = r"E:\铭\workspace\布缝\traindata\jiefeng20241126\images"
+    src_data_folder = r"E:\铭\workspace\布缝\traindata\train"
+    #### modify_yolo_labels(src_data_folder)
     # file_move(src_data_folder)
 
     split_ratio = 0.95  # 训练集占比

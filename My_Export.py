@@ -17,7 +17,7 @@ def export_hc_pt(yolo_pt:str):
     torch.save({'model':md}, yolo_pt)
 
 if __name__ == '__main__':
-    export_hc_pt(r'E:\work\code\ultralytics\zhitong_yolov8l\v2.1\train\weights\best.pt')
+    # export_hc_pt(r'E:\work\code\ultralytics\zhitong_yolov8l\v2.1\train\weights\best.pt')
 
 
 
@@ -60,15 +60,15 @@ if __name__ == '__main__':
     
     
     # #pt转onnx
-    # model = YOLO(r'E:\work\code\ultralytics\bufeng_yolov8s640\v1.0\weights\last.pt', task='detect')
+    # model = YOLO(r'E:\work\code\ultralytics\project\bufeng_yolov11s640\v1.5\weights\best.pt', task='detect')
     # model.export(format='onnx', opset=10)
     
     
     #onnx转OV
-    temp_dir = Path(r'E:\work\code\ultralytics\bufeng_yolov8s640\v1.0\weights\ov')
-    temp_onnx_path = temp_dir.joinpath(os.path.basename("last.onnx"))
-    # temp_ov_model = ov.convert_model(temp_onnx_path)
+    temp_dir = Path(r'E:\work\code\ultralytics\project\bufeng_yolov11s640\v1.5\weights')
+    temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
     temp_ov_path = temp_onnx_path.with_suffix('.xml')
+    # temp_ov_model = ov.convert_model(temp_onnx_path)
     # ov.save_model(temp_ov_model, output_model=temp_ov_path, compress_to_fp16=False)
     
     
@@ -77,12 +77,12 @@ if __name__ == '__main__':
     from comutils.simplecrypto import MultiFileEncryption, FileEncryption
     dataset_dir = r"E:\work\Data\bufeng"
     xml_path_file = temp_ov_path
-    out_path_file = str(xml_path_file).replace('.xml', '.hcov')
+    out_path_file = str(xml_path_file).replace('.xml', '.engineOV')
     bin_path_file = str(xml_path_file).replace('.xml', '.bin')
     encry = None
     if Path(dataset_dir + '/labelinfo/Categories.json').exists():
         encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file), 'categories':dataset_dir + '/labelinfo/Categories.json'})
-        encry.add_buffer({"UseModelName": "detection_yolov8"})
+        encry.add_buffer({"UseModelName": "detection_yolo11"})  #"detection_yolov5", "detection_yolov8", "detection_yolo11"
     else:
         encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file)})
     chiper_buffer = encry()
