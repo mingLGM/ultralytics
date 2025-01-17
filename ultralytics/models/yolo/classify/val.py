@@ -1,4 +1,4 @@
-# Ultralytics YOLO 🚀, AGPL-3.0 license
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
 import torch
 
@@ -70,6 +70,10 @@ class ClassificationValidator(BaseValidator):
         self.metrics.speed = self.speed
         self.metrics.confusion_matrix = self.confusion_matrix
         self.metrics.save_dir = self.save_dir
+
+    def postprocess(self, preds):
+        """Preprocesses the classification predictions."""
+        return preds[0] if isinstance(preds, (list, tuple)) else preds
 
     def get_stats(self):
         """Returns a dictionary of metrics obtained by processing targets and predictions."""

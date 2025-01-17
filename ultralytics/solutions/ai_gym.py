@@ -1,4 +1,4 @@
-# Ultralytics YOLO 🚀, AGPL-3.0 license
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
 from ultralytics.solutions.solutions import BaseSolution
 from ultralytics.utils.plotting import Annotator
@@ -71,7 +71,7 @@ class AIGym(BaseSolution):
             >>> processed_image = gym.monitor(image)
         """
         # Extract tracks
-        tracks = self.model.track(source=im0, persist=True, classes=self.CFG["classes"])[0]
+        tracks = self.model.track(source=im0, persist=True, classes=self.CFG["classes"], **self.track_add_args)[0]
 
         if tracks.boxes.id is not None:
             # Extract and check keypoints
