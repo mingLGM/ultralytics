@@ -1,6 +1,8 @@
 from ultralytics import YOLO
 
 if __name__ == "__main__":
+    
+    # 任务: 纸筒
     # # Load a model
     # model = YOLO("yolov8l.yaml")  # build a new model from scratch
     # #model = YOLO(r'D:\lzm\work\ultralytics\zhitong_yolov8l\v2.1\train\weights\best.pt', task="detect")  # load a pretrained model (recommended for training)
@@ -20,15 +22,33 @@ if __name__ == "__main__":
     # # model.val() # 在验证集模型上评估模型性能
     
     
-    # bufeng
-    model_yaml = r"yolo11s.yaml"
-    data_yaml  = r"bufeng.yaml"
-    pre_model  = r"E:\work\code\ultralytics\project\bufeng_yolov11s640\v1.4\weights\best.pt"  #r"yolo11s.pt"
+    # # 任务: 布缝
+    # model_yaml = r"yolo11s.yaml"
+    # data_yaml  = r"bufeng.yaml"
+    # pre_model  = r"E:\work\code\ultralytics\project\bufeng_yolov11s640\v1.4\weights\best.pt"  #r"yolo11s.pt"
+    # model = YOLO(model_yaml)
+    # model = YOLO(pre_model, task="detect")
+    # model.train(data=data_yaml, lr0=0.001,  epochs=1000, patience=0, batch=16, imgsz=640, save=True, save_period=50, device="0", workers=4,
+    #             project='./project/bufeng_yolov11s640', name='v1.5', optimizer='SGD', cos_lr=True, amp=True) 
+    # model.val(data=data_yaml, imgsz=640) 
+    
+    
+    
+    # 任务: QR关键点
+    model_yaml = r"yolo11m-pose_QR.yaml"
+    data_yaml  = r"QR-pose.yaml"
+    pre_model  = r"yolo11m-pose.pt"  #r"yolo11s.pt"
     model = YOLO(model_yaml)
-    model = YOLO(pre_model, task="detect")
-    model.train(data=data_yaml, lr0=0.001,  epochs=1000, patience=0, batch=16, imgsz=640, save=True, save_period=50, device="0", workers=4,
-                project='./project/bufeng_yolov11s640', name='v1.5', optimizer='SGD', cos_lr=True, amp=True) 
+    model = YOLO(pre_model, task="pose")
+    model.train(data=data_yaml, lr0=0.001,  epochs=300, patience=0, batch=4, imgsz=640, save=True, save_period=50, device="0", workers=4,
+                project='./project/QR_yolo11m640', name='exp', optimizer='SGD', cos_lr=True, amp=True) 
     model.val(data=data_yaml, imgsz=640) 
+    
+    
+    
+    
+    
+    
     
     
     
