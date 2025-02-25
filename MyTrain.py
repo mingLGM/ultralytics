@@ -25,11 +25,11 @@ if __name__ == "__main__":
     # # 任务: 布缝
     # model_yaml = r"yolo11s.yaml"
     # data_yaml  = r"bufeng.yaml"
-    # pre_model  = r"E:\work\code\ultralytics\project\bufeng_yolov11s640\v1.4\weights\best.pt"  #r"yolo11s.pt"
+    # pre_model  = r"E:\work\code\ultralytics\project\bufeng_yolov11s640\v1.5\weights\best.pt"  #r"yolo11s.pt"
     # model = YOLO(model_yaml)
     # model = YOLO(pre_model, task="detect")
     # model.train(data=data_yaml, lr0=0.001,  epochs=1000, patience=0, batch=16, imgsz=640, save=True, save_period=50, device="0", workers=4,
-    #             project='./project/bufeng_yolov11s640', name='v1.5', optimizer='SGD', cos_lr=True, amp=True) 
+    #             project='./project/bufeng_yolov11s640_cls-2', name='v1.0', optimizer='SGD', cos_lr=True, amp=True) 
     # model.val(data=data_yaml, imgsz=640) 
     
     
@@ -41,7 +41,8 @@ if __name__ == "__main__":
     model = YOLO(model_yaml)
     model = YOLO(pre_model, task="pose")
     model.train(data=data_yaml, lr0=0.001,  epochs=300, patience=0, batch=4, imgsz=640, save=True, save_period=50, device="0", workers=4,
-                project='./project/QR_yolo11m640', name='exp', optimizer='SGD', cos_lr=True, amp=True) 
+                project='./project/QR_yolo11m640', name='train', optimizer='SGD', cos_lr=True, amp=True, close_mosaic=10, multi_scale = True)  
+        # muti_scale：图片会有多种shape传入网络，训练效果更好，但是很耗显存
     model.val(data=data_yaml, imgsz=640) 
     
     

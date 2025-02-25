@@ -245,6 +245,8 @@ class Pose(Detect):
         bs = x[0].shape[0]  # batch size
         kpt = torch.cat([self.cv4[i](x[i]).view(bs, self.nk, -1) for i in range(self.nl)], -1)  # (bs, 17*3, h*w)
         x = Detect.forward(self, x)
+        if self.export:
+            x = x.permute([0,2,1])
         if self.training:
             return x, kpt
         pred_kpt = self.kpts_decode(bs, kpt)

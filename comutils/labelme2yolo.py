@@ -81,10 +81,11 @@ if __name__ == '__main__':
     
     # 框的类别
     bbox_class = {
-        'QRrect':0  
+        'QRrect':0 , 
+        'QRrect_QR':1  
     }
     # 关键点的类别
-    keypoint_class = ['QR_tl', 'QR_tr', 'QR_br', 'QR_bl']
+    keypoint_class = ['QRpoint_1', 'QRpoint_2', 'QRpoint_3', 'QRpoint_4']
 
 
 
