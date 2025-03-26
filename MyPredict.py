@@ -14,9 +14,10 @@ if __name__ == "__main__":
     ####----检测----
     # model = YOLO('yolov8l.yaml')
     # model = YOLO(r'D:\lzm\work\ultralytics\zhitong_yolov8l\v2.1\train\weights\best.pt')  # 加载预训练的 YOLOv8n 模型
-    model = YOLO(r'E:\work\code\ultralytics\bufeng_yolov8s640\v1.0\weights\last.pt', task='detect')  # 加载预训练的 YOLOv8n 模型
-    # model = YOLO(r'D:\work\deepcode\project\zhitong_yolov8\model_v2.1\best.onnx', task='detect')  # 加载预训练的 YOLOv8n 模型
-    model.predict(source=r'E:\铭\workspace\布缝\1031(1)\1031\无框', save=True, save_txt=True, save_conf=True, save_crop=False, conf=0.15, iou=0.3, device="0", imgsz=1280)  # 对图像进行预测
+    # model = YOLO(r'E:\work\code\ultralytics\bufeng_yolov8s640\v1.0\weights\last.pt', task='detect')  # 加载预训练的 YOLOv8n 模型
+    # model.predict(source=r'E:\铭\workspace\布缝\1031(1)\1031\无框', save=True, save_txt=True, save_conf=True, save_crop=False, conf=0.15, iou=0.3, device="0", imgsz=1280)  # 对图像进行预测
+    model = YOLO(r'E:\work\code\ultralytics\project\QR_yolo11m640\exp\weights\best.pt', task='pose')  # 加载预训练的 YOLOv8n 模型
+    model.predict(source=r'E:\work\Data\QR\images\val', save=True, save_txt=True, save_conf=True, save_crop=True, conf=0.15, iou=0.3, device="0", imgsz=640)  # 对图像进行预测
     # model.export(format='onnx') # 将模型导出为 ONNX 格式
     
 

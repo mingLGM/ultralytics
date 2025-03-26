@@ -81,7 +81,7 @@ if __name__ == '__main__':
     
     # 框的类别
     bbox_class = {
-        'QRrect':0 , 
+        'QRrect_DM':0 , 
         'QRrect_QR':1  
     }
     # 关键点的类别

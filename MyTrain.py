@@ -25,25 +25,25 @@ if __name__ == "__main__":
     # # 任务: 布缝
     # model_yaml = r"yolo11s.yaml"
     # data_yaml  = r"bufeng.yaml"
-    # pre_model  = r"E:\work\code\ultralytics\project\bufeng_yolov11s640\v1.5\weights\best.pt"  #r"yolo11s.pt"
+    # pre_model  = r"E:\work\code\ultralytics\project\bufeng_yolov11s640_cls-2\v1.0\weights\best.pt"  #r"yolo11s.pt"
     # model = YOLO(model_yaml)
     # model = YOLO(pre_model, task="detect")
-    # model.train(data=data_yaml, lr0=0.001,  epochs=1000, patience=0, batch=16, imgsz=640, save=True, save_period=50, device="0", workers=4,
-    #             project='./project/bufeng_yolov11s640_cls-2', name='v1.0', optimizer='SGD', cos_lr=True, amp=True) 
-    # model.val(data=data_yaml, imgsz=640) 
+    # model.train(data=data_yaml, lr0=0.001,  epochs=1, patience=0, batch=16, imgsz=640, save=True, save_period=50, device="0", workers=4,
+    #             project='./project/bufeng_yolov11s640_cls-2', name='v2.0', optimizer='SGD', cos_lr=True, amp=True) 
+    # # model.val(data=data_yaml, imgsz=640) 
     
     
     
     # 任务: QR关键点
     model_yaml = r"yolo11m-pose_QR.yaml"
     data_yaml  = r"QR-pose.yaml"
-    pre_model  = r"yolo11m-pose.pt"  #r"yolo11s.pt"
+    pre_model  = r'E:\work\code\ultralytics\project\QRDM_yolo11l320_cls2\7.0\best.pt' #r"yolo11m-pose.pt"  #r"yolo11s.pt"
     model = YOLO(model_yaml)
     model = YOLO(pre_model, task="pose")
-    model.train(data=data_yaml, lr0=0.001,  epochs=300, patience=0, batch=4, imgsz=640, save=True, save_period=50, device="0", workers=4,
-                project='./project/QR_yolo11m640', name='train', optimizer='SGD', cos_lr=True, amp=True, close_mosaic=10, multi_scale = True)  
+    model.train(data=data_yaml, lr0=0.0005,  epochs=1000, patience=0, batch=16, imgsz=320, save=True, save_period=50, device="0", workers=8,
+                project='./project/QRDM_yolo11l320_cls2', name='train_8.0', optimizer='AdamW', warmup_epochs = 5, cos_lr=True, amp=True, close_mosaic=10, multi_scale = True)  
         # muti_scale：图片会有多种shape传入网络，训练效果更好，但是很耗显存
-    model.val(data=data_yaml, imgsz=640) 
+    # model.val(data=data_yaml, imgsz=640) 
     
     
     

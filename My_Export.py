@@ -6,7 +6,7 @@ import openvino as ov
 import os
 from pathlib import Path
 from comutils.simplecrypto import MultiFileEncryption, FileEncryption
-from comutils.My_simplecrypto import decrypt_files
+from comutils.My_simplecrypto import encrypt_files, decrypt_files
 # from openvino.tools.mo import convert_model
 
 
@@ -55,21 +55,22 @@ if __name__ == '__main__':
     
     # #任务: QR码
     # #pt转onnx
-    # model = YOLO(r'E:\work\code\ultralytics\project\QR_yolo11m640\exp\weights\best.pt', task='pose')
-    # model.export(format='onnx', opset=10, simplify=True)  # , simplify=True
+    temp_dir = Path(r'E:\work\code\ultralytics\project\QR_yolo11m640\exp\weights\temp')
+    temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
+    model = YOLO(temp_pt_path, task='pose')
+    model.export(format='onnx', opset=10, simplify=True)  # , simplify=True
     
-    ##onnx转openvino
-    temp_dir = Path(r'E:\work\code\ultralytics\project\QR_yolo11m640\exp\weights')
-    temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
-    xml_path_file = temp_onnx_path.with_suffix('.xml')
-    bin_path_file = temp_onnx_path.with_suffix('.bin')
-    temp_ov_model = ov.convert_model(temp_onnx_path)
-    ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=False)
+    # ##onnx转openvino
+    # temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
+    # xml_path_file = temp_onnx_path.with_suffix('.xml')
+    # bin_path_file = temp_onnx_path.with_suffix('.bin')
+    # # temp_ov_model = ov.convert_model(temp_onnx_path)
+    # # ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=False)
     
-    ## openvino加密 
-    hcov_path_file = xml_path_file.with_suffix('.hcir')
+    # ## openvino加密 
+    # hcov_path_file = xml_path_file.with_suffix('.hcir')
     # encrypt_files(xml_path_file, bin_path_file, hcov_path_file)
-    decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
+    # # decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
     
     
     
@@ -78,12 +79,12 @@ if __name__ == '__main__':
     # # 任务: 布缝
     # ##pt转onnx
     # temp_dir = Path(r'E:\work\code\ultralytics\project\bufeng_yolov11s640_cls-2\v1.0\weights')
-    # # temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
-    # # model = YOLO(temp_pt_path, task='detect')
-    # # model.export(format='onnx', opset=10)
+    # temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
+    # model = YOLO(temp_pt_path, task='detect')
+    # model.export(format='onnx', opset=10)
     
     
-    # #onnx转OV
+    # # #onnx转OV
     # temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
     # temp_ov_path = temp_onnx_path.with_suffix('.xml')
     # # temp_ov_model = ov.convert_model(temp_onnx_path)
