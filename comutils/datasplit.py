@@ -167,13 +167,18 @@ def split_dataset(source_folder, split_ratio=0.8):
         for img_file in file_list:
             base_name = os.path.splitext(img_file)[0]
             label_file = base_name + ".txt"
+            json_file = base_name + ".json"
 
-            new_name = "bac_rename_" + base_name
+            new_name = base_name
+            # new_name = "bac_rename_" + base_name
             img_file_new = new_name + os.path.splitext(img_file)[1]
             label_file_new = new_name + ".txt"
+            json_file_new = new_name + ".json"
 
             # 移动图片文件
             shutil.copy(os.path.join(src_images, img_file), os.path.join(dest_images, img_file_new))
+            if os.path.exists(os.path.join(src_images, json_file)):
+                shutil.copy(os.path.join(src_images, json_file), os.path.join(dest_images, json_file_new))
 
             # 移动对应的标签文件
             if os.path.exists(os.path.join(src_labels, label_file)):
@@ -229,7 +234,7 @@ if __name__ == '__main__':
     # data_set_split(src_data_folder, target_data_folder)
 
 
-    src_data_folder = r"E:\铭\workspace\布缝\traindata\train"
+    src_data_folder = r"E:\work\Data\QR\yolo"
     #### modify_yolo_labels(src_data_folder)
     # file_move(src_data_folder)
     # #file_move_images(src_data_folder)

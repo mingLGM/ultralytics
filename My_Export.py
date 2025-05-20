@@ -55,22 +55,22 @@ if __name__ == '__main__':
     
     # #任务: QR码
     # #pt转onnx
-    temp_dir = Path(r'E:\work\code\ultralytics\project\QR_yolo11m640\exp\weights\temp')
+    temp_dir = Path(r'E:\work\code\ultralytics\project\QRDM_yolov8Seg_s640_cls2\Ftrain_1.1\weights')
     temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
-    model = YOLO(temp_pt_path, task='pose')
+    model = YOLO(temp_pt_path, task='segment')  #'segment'  'pose'
     model.export(format='onnx', opset=10, simplify=True)  # , simplify=True
     
-    # ##onnx转openvino
-    # temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
-    # xml_path_file = temp_onnx_path.with_suffix('.xml')
-    # bin_path_file = temp_onnx_path.with_suffix('.bin')
-    # # temp_ov_model = ov.convert_model(temp_onnx_path)
-    # # ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=False)
+    ##onnx转openvino
+    temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
+    xml_path_file = temp_onnx_path.with_suffix('.xml')
+    bin_path_file = temp_onnx_path.with_suffix('.bin')
+    temp_ov_model = ov.convert_model(temp_onnx_path)
+    ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=False)
     
-    # ## openvino加密 
-    # hcov_path_file = xml_path_file.with_suffix('.hcir')
-    # encrypt_files(xml_path_file, bin_path_file, hcov_path_file)
-    # # decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
+    ## openvino加密 
+    hcov_path_file = xml_path_file.with_suffix('.hcir')
+    encrypt_files(xml_path_file, bin_path_file, hcov_path_file)
+    # decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
     
     
     
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     
     # # 任务: 布缝
     # ##pt转onnx
-    # temp_dir = Path(r'E:\work\code\ultralytics\project\bufeng_yolov11s640_cls-2\v1.0\weights')
+    # temp_dir = Path(r'E:\work\code\ultralytics\project\xianshu_yolov11s640_cls-6\f1.0\weights')
     # temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
     # model = YOLO(temp_pt_path, task='detect')
     # model.export(format='onnx', opset=10)
@@ -87,23 +87,36 @@ if __name__ == '__main__':
     # # #onnx转OV
     # temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
     # temp_ov_path = temp_onnx_path.with_suffix('.xml')
-    # # temp_ov_model = ov.convert_model(temp_onnx_path)
-    # # ov.save_model(temp_ov_model, output_model=temp_ov_path, compress_to_fp16=False)
+    # temp_ov_model = ov.convert_model(temp_onnx_path)
+    # ov.save_model(temp_ov_model, output_model=temp_ov_path, compress_to_fp16=False)
     
     
-    # #OV加密
+    # ##OV加密
     # from comutils.simplecrypto import MultiFileEncryption, FileEncryption
     # dataset_dir = r"E:\work\Data\bufeng_2"
     # xml_path_file = temp_ov_path
-    # out_path_file = str(xml_path_file).replace('.xml', '.engineOV')
     # bin_path_file = str(xml_path_file).replace('.xml', '.bin')
-    # encry = None
-    # if Path(dataset_dir + '/labelinfo/Categories.json').exists():
-    #     encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file), 'categories':dataset_dir + '/labelinfo/Categories.json'})
-    #     encry.add_buffer({"UseModelName": "detection_yolo11"})  #"detection_yolov5", "detection_yolov8", "detection_yolo11"
-    # else:
-    #     encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file)})
-    # chiper_buffer = encry()
-    # if chiper_buffer is not None:
-    #     with open(out_path_file, 'wb') as f:
-    #         f.write(chiper_buffer)
+    # #### HC加密
+    # # out_path_file = str(xml_path_file).replace('.xml', '.engineOV')
+    # # encry = None
+    # # if Path(dataset_dir + '/labelinfo/Categories.json').exists():
+    # #     encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file), 'categories':dataset_dir + '/labelinfo/Categories.json'})
+    # #     encry.add_buffer({"UseModelName": "detection_yolo11"})  #"detection_yolov5", "detection_yolov8", "detection_yolo11"
+    # # else:
+    # #     encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file)})
+    # # chiper_buffer = encry()
+    # # if chiper_buffer is not None:
+    # #     with open(out_path_file, 'wb') as f:
+    # #         f.write(chiper_buffer)
+    # #### ming加密
+    # hcov_path_file = xml_path_file.with_suffix('.EngineOV')
+    # encrypt_files(xml_path_file, bin_path_file, hcov_path_file)
+    # # decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
+    
+    
+    
+    
+    # temp_dir = Path(r'E:\work\code\ultralytics\models')
+    # temp_pt_path = temp_dir.joinpath(os.path.basename("models/yolov8s640-seg_official.pt"))
+    # model = YOLO(temp_pt_path, task = 'segment')
+    # model.export(format='onnx', simplify=True)

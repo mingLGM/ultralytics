@@ -263,7 +263,7 @@ def rotate_and_save(img,data,output_json_dir,angle,rotation_idx):
     rotated_img,M,new_w,new_h = rotate_img(img,angle)
     transformerd_data =process_annotations(copy.deepcopy(data),M,new_w,new_h)
     base_name = os.path.splitext(data['imagePath'])[0]
-    suffix = f'_rot{rotation_idx}_{int(angle)}'
+    suffix = f'_rotate{rotation_idx}_{int(angle)}'
     new_img_name = f"{base_name}{suffix}.jpg"
     new_json_name = f"{base_name}{suffix}.json"
     cv2.imwrite(os.path.join(output_img_dir,new_img_name),rotated_img)
@@ -299,11 +299,16 @@ if __name__ == '__main__':
     original_jsons_dir = original_dir.joinpath("jsons")
     cropped_img_dir = original_dir.joinpath("crop_images")
     cropped_jsons_dir = original_dir.joinpath("crop_jsons")
-    output_img_dir = original_dir.joinpath("rotate_images")
-    output_json_dir = original_dir.joinpath("rotate_jsons")
-
-    x=[20]  # [30,60,-30,-60]
     outward = 8
     crop_and_adjust_jsons(original_images_dir,original_jsons_dir,cropped_img_dir,cropped_jsons_dir, outward, iou_threshold=0.5)
-    rotate_and_adjust_jsons(cropped_img_dir,cropped_jsons_dir,output_img_dir,output_json_dir)
+    
+    
+    
+    # raw_dir = Path(r"E:\work\Data\QR\temp\raw")
+    # raw_images_dir = raw_dir.joinpath("images")
+    # raw_jsons_dir = raw_dir.joinpath("jsons")
+    # output_img_dir = raw_dir.joinpath("rotate_images")
+    # output_json_dir = raw_dir.joinpath("rotate_jsons")
+    # x=[20]  # [30,60,-30,-60]
+    # rotate_and_adjust_jsons(raw_images_dir,raw_jsons_dir,output_img_dir,output_json_dir)
     
