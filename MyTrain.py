@@ -60,18 +60,30 @@ if __name__ == "__main__":
     # # model.val(data=data_yaml, imgsz=640) 
     
     
+    
+    
     ####分割算法
-    model_yaml = r"yolov8s-seg.yaml"
-    data_yaml  = r"QRDM-seg.yaml"
-    pre_model  = r'yolov8s-seg.pt' #r"yolo11m-pose.pt"  #r"yolo11s.pt"
+    ##大模型
+    model_yaml = r"yolov8n-seg.yaml"
+    data_yaml  = r"QRDM-seg_raw&crop.yaml"
+    pre_model  = r'yolov8n-seg.pt' #r"yolo11m-pose.pt"  #r"yolo11s.pt"  r'/home/zhangshuwen/work/code/ultralytics/project/QRDM_yolov8Seg_s640_cls2/train_1.1/weights/best.pt'
     model = YOLO(model_yaml)
     model = YOLO(pre_model, task="segment")
-    model.train(data=data_yaml, lr0=0.0001, lrf=0.01, cos_lr=True,  epochs=800, patience=0, batch=16, imgsz=640, save=True, save_period=50, device="0", workers=8, mask_ratio = 1,
-                project='./project/QRDM_yolov8Seg_s640_cls2', name='train_1.0', optimizer='AdamW', warmup_epochs = 5, amp=True, close_mosaic=10, multi_scale = True)  
+    model.train(data=data_yaml, lr0=0.0001, lrf=0.01, cos_lr=True,  epochs=200, patience=0, batch=16, imgsz=640, save=True, save_period=50, device="0", workers=8, mask_ratio = 1,
+                project='./project/QRDM_yolov8Seg_n640_cls2', name='train_1.0', optimizer='AdamW', warmup_epochs = 5, amp=True, close_mosaic=10, multi_scale = True)  
         # muti_scale：图片会有多种shape传入网络，训练效果更好，但是很耗显存
-    # model.val(data=data_yaml, imgsz=640) 
+    model.val(data=data_yaml, imgsz=640) 
     
-    
+    # ##小模型
+    # model_yaml = r"yolov8n-seg.yaml"
+    # data_yaml  = r"QRDM-seg_crop.yaml"
+    # pre_model  = r'yolov8n-seg.pt' #r"yolo11m-pose.pt"  #r"yolo11s.pt"
+    # model = YOLO(model_yaml)
+    # model = YOLO(pre_model, task="segment")
+    # model.train(data=data_yaml, lr0=0.001, lrf=0.01, cos_lr=True,  epochs=500, patience=0, batch=16, imgsz=320, save=True, save_period=50, device="0,1", workers=8, mask_ratio = 1,
+    #             project='./project/QRDM_yolov8Seg_n320_cls2', name='train_1.0', optimizer='AdamW', warmup_epochs = 5, amp=True, close_mosaic=10, multi_scale = True)  
+    #     # muti_scale：图片会有多种shape传入网络，训练效果更好，但是很耗显存
+    # model.val(data=data_yaml, imgsz=320) 
     
     
     

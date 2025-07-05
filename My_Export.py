@@ -55,7 +55,7 @@ if __name__ == '__main__':
     
     # #任务: QR码
     # #pt转onnx
-    temp_dir = Path(r'E:\work\code\ultralytics\project\QRDM_yolov8Seg_s640_cls2\Ftrain_1.1\weights')
+    temp_dir = Path(r'E:\work\code\ultralytics\project\QRDM_yolov8Seg_M2_n320_cls2\train_1.0\weights')
     temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
     model = YOLO(temp_pt_path, task='segment')  #'segment'  'pose'
     model.export(format='onnx', opset=10, simplify=True)  # , simplify=True
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     xml_path_file = temp_onnx_path.with_suffix('.xml')
     bin_path_file = temp_onnx_path.with_suffix('.bin')
     temp_ov_model = ov.convert_model(temp_onnx_path)
-    ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=False)
+    ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=True)
     
     ## openvino加密 
     hcov_path_file = xml_path_file.with_suffix('.hcir')

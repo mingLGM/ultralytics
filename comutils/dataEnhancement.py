@@ -41,7 +41,7 @@ def process_single_crop(img,original_data,box_shape,box_idx,original_images_dir,
            
             box_width=x2-x1
             box_height=y2-y1
-            crop_size=max(box_width,box_height)*outward
+            crop_size=max(box_width,box_height)*(1 + 1/outward)
             center_x=random.randint(int(x2-(crop_size/2)),int(x1+(crop_size/2)))
             center_y=random.randint(int(y2-(crop_size/2)),int(y1+(crop_size/2)))
             crop_x1=max(0,int(center_x-crop_size/2))
@@ -71,6 +71,8 @@ def process_single_crop(img,original_data,box_shape,box_idx,original_images_dir,
                              new_shapes.append(new_point)
                              pts.append(new_point['points'][0])
                             #  a=a+1
+                        else:
+                            continue
                 else:
                     continue
             
@@ -147,23 +149,35 @@ def process_point(shape,matrix,img_size,valid_boxes):
     new_y=pt[1]
     if not (0<= new_x <img_size[1] and 0<= new_y<img_size[0]):
         return None
+    
+    #  裁剪图内添加所有关键点
+    return{
+            "label":shape["label"],
+            "points":[[new_x,new_y]],
+            "group_id":None,
+            "description": " ",
+            "shape_type":"point",
+            "flags":shape["flags"],
+            "mask":None,
+        } 
 
-    for box in valid_boxes:
-        if box['shape_type'] == 'rectangle':
-            box_points = np.array(box['points'])
-            x1,y1 =np.min(box_points,axis=0)
-            x2,y2 =np.max(box_points,axis=0)
-            if x1 <= new_x <= x2 and y1 <=new_y <= y2:
-                return{
-                    "label":shape["label"],
-                    "points":[[new_x,new_y]],
-                    "group_id":None,
-                    "description": " ",
-                    "shape_type":"point",
-                    "flags":shape["flags"],
-                    "mask":None,
-                }  
-    return None
+    # #  裁剪图内添加矩形框'rectangle'内关键点
+    # for box in valid_boxes:
+    #     if box['shape_type'] == 'rectangle':
+    #         box_points = np.array(box['points'])
+    #         x1,y1 =np.min(box_points,axis=0)
+    #         x2,y2 =np.max(box_points,axis=0)
+    #         if x1 <= new_x <= x2 and y1 <=new_y <= y2:
+    #             return{
+    #                 "label":shape["label"],
+    #                 "points":[[new_x,new_y]],
+    #                 "group_id":None,
+    #                 "description": " ",
+    #                 "shape_type":"point",
+    #                 "flags":shape["flags"],
+    #                 "mask":None,
+    #             }  
+    # return None
 
 def rotate_and_adjust_jsons(cropped_img_dir,cropped_jsons_dir,output_img_dir,output_json_dir):
     os.makedirs(output_img_dir,exist_ok=True)
@@ -266,7 +280,7 @@ def rotate_and_save(img,data,output_json_dir,angle,rotation_idx):
     suffix = f'_rotate{rotation_idx}_{int(angle)}'
     new_img_name = f"{base_name}{suffix}.jpg"
     new_json_name = f"{base_name}{suffix}.json"
-    cv2.imwrite(os.path.join(output_img_dir,new_img_name),rotated_img)
+    cv2.imwrite(os.path.join(output_json_dir,new_img_name),rotated_img)
     new_data ={
         "version":data["version"],
         "flags":data["flags"],
@@ -294,12 +308,12 @@ def rotate_and_save(img,data,output_json_dir,angle,rotation_idx):
 
 if __name__ == '__main__':
     
-    original_dir = Path(r"E:\work\Data\QR\temp\raw")
+    original_dir = Path(r"E:\work\Data\QRDM\temp\raw")
     original_images_dir = original_dir.joinpath("images")
     original_jsons_dir = original_dir.joinpath("jsons")
     cropped_img_dir = original_dir.joinpath("crop_images")
     cropped_jsons_dir = original_dir.joinpath("crop_jsons")
-    outward = 8
+    outward = 2  # 向外扩展的比例为(1+1/outward)    #2
     crop_and_adjust_jsons(original_images_dir,original_jsons_dir,cropped_img_dir,cropped_jsons_dir, outward, iou_threshold=0.5)
     
     

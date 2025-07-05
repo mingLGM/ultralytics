@@ -166,23 +166,19 @@ def split_dataset(source_folder, split_ratio=0.8):
     def move_files(file_list, src_images, src_labels, dest_images, dest_labels):
         for img_file in file_list:
             base_name = os.path.splitext(img_file)[0]
-            label_file = base_name + ".txt"
-            json_file = base_name + ".json"
+            label_name = base_name + ".txt"
+            json_name = base_name + ".json"
 
-            new_name = base_name
-            # new_name = "bac_rename_" + base_name
+            new_name = base_name  # "bac_rename_" + base_name
             img_file_new = new_name + os.path.splitext(img_file)[1]
             label_file_new = new_name + ".txt"
             json_file_new = new_name + ".json"
 
-            # 移动图片文件
-            shutil.copy(os.path.join(src_images, img_file), os.path.join(dest_images, img_file_new))
-            if os.path.exists(os.path.join(src_images, json_file)):
-                shutil.copy(os.path.join(src_images, json_file), os.path.join(dest_images, json_file_new))
-
-            # 移动对应的标签文件
-            if os.path.exists(os.path.join(src_labels, label_file)):
-                shutil.copy(os.path.join(src_labels, label_file), os.path.join(dest_labels, label_file_new))
+            # 移动图片文件和对应标签文件
+            if os.path.exists(os.path.join(src_images, img_file)) and os.path.exists(os.path.join(src_labels, label_name)):
+                shutil.copy(os.path.join(src_images, img_file), os.path.join(dest_images, img_file_new))
+                shutil.copy(os.path.join(src_labels, label_name), os.path.join(dest_labels, label_file_new))
+                # shutil.copy(os.path.join(src_images, json_name), os.path.join(dest_images, json_file_new))
 
     # 将文件移动到对应的 train 和 test 目录
     move_files(train_files, images_folder, labels_folder, train_images_folder, train_labels_folder)
@@ -234,7 +230,7 @@ if __name__ == '__main__':
     # data_set_split(src_data_folder, target_data_folder)
 
 
-    src_data_folder = r"E:\work\Data\QR\yolo"
+    src_data_folder = r"E:\work\Data\QRDM\temp\outward_0.25"
     #### modify_yolo_labels(src_data_folder)
     # file_move(src_data_folder)
     # #file_move_images(src_data_folder)
