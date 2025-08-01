@@ -104,34 +104,41 @@ def file_move_images(src_data_folder):
     :param src_data_folder: 源文件夹
     :return:
     '''
-    label_folder = os.path.join(src_data_folder, "images")
-    images_folder = os.path.join(src_data_folder, "jsons")
+    label_folder = os.path.join(src_data_folder, "labels")
+    images_folder = os.path.join(src_data_folder, "images")
 
-    # 创建目标文件夹
-    os.makedirs(label_folder, exist_ok=True)
-    os.makedirs(images_folder, exist_ok=True)
-    num = 0
+    # # 创建目标文件夹
+    # os.makedirs(label_folder, exist_ok=True)
+    # os.makedirs(images_folder, exist_ok=True)
+    # num = 0
 
     # 遍历源文件夹中的所有文件
-    for file in os.listdir(src_data_folder):
+    for file in os.listdir(label_folder):
         # 如果文件是txt文件
         if file.endswith(".jpg"):
-            txt_file_path = os.path.join(src_data_folder, file)
-            # 移动txt文件到label文件夹
-            shutil.move(txt_file_path, os.path.join(label_folder, file))
+            # txt_file_path = os.path.join(src_data_folder, file)
+            # # 移动txt文件到label文件夹
+            # shutil.move(txt_file_path, os.path.join(label_folder, file))
 
-            # 获取对应的jpg文件路径
+            # # 获取对应的jpg文件路径
+            # jpg_file = file.replace(".jpg", ".json")
+            # jpg_file_path = os.path.join(src_data_folder, jpg_file)
+
+            # # 如果对应的jpg文件存在
+            # if os.path.exists(jpg_file_path):
+            #     # 移动jpg文件到images文件夹
+            #     shutil.move(jpg_file_path, os.path.join(images_folder, jpg_file))
+            #     num += 1
+            
             jpg_file = file.replace(".jpg", ".json")
-            jpg_file_path = os.path.join(src_data_folder, jpg_file)
-
-            # 如果对应的jpg文件存在
-            if os.path.exists(jpg_file_path):
-                # 移动jpg文件到images文件夹
-                shutil.move(jpg_file_path, os.path.join(images_folder, jpg_file))
-                num += 1
+            json_file_path = os.path.join(label_folder, file)
+            jpg_file_path = os.path.join(images_folder, file)
+            if (not os.path.exists(jpg_file_path)) and os.path.exists(json_file_path):
+                shutil.move(json_file_path, os.path.join(src_data_folder, file))
+            
             else:
-                print(f"警告: 找不到对应的图像文件 {jpg_file}")
-    print("移动 " + str(num) + " 张图像.")
+                print(f"警告: 找不到对应的图像文件 {file}")
+    # print("移动 " + str(num) + " 张图像.")
 
 def split_dataset(source_folder, split_ratio=0.8):
     """
@@ -230,10 +237,10 @@ if __name__ == '__main__':
     # data_set_split(src_data_folder, target_data_folder)
 
 
-    src_data_folder = r"E:\work\Data\QRDM\temp\outward_0.25"
+    src_data_folder = r"E:\铭\workspace\线束\data\train"
     #### modify_yolo_labels(src_data_folder)
     # file_move(src_data_folder)
-    # #file_move_images(src_data_folder)
+    # file_move_images(src_data_folder)
 
     split_ratio = 0.95  # 训练集占比
     split_dataset(src_data_folder, split_ratio)
