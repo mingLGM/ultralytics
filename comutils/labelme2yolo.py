@@ -7,7 +7,7 @@ import numpy as np
 
 
 # 函数 处理单个labelme标注json文件(检测算法)
-def ProcessSingleJson_Detect(labelme_path, save_folder='../../labels', Labeling_software='Labelme'):
+def ProcessSingleJson_Detect(labelme_path, bbox_classes, save_folder='../../labels', Labeling_software='Labelme'):
     file_name, file_extension = os.path.splitext(labelme_path)
     if(file_extension != '.json'):
         print('{} 不是json文件'.format(labelme_path))
@@ -29,7 +29,7 @@ def ProcessSingleJson_Detect(labelme_path, save_folder='../../labels', Labeling_
                 yolo_str = ''
                 ## 框的信息
                 # 框的类别 ID
-                bbox_class_id = bbox_class[each_ann['label']]
+                bbox_class_id = bbox_classes[each_ann['label']]
                 yolo_str += '{} '.format(bbox_class_id)
                 # 左上角和右下角的 XY 像素坐标
                 if Labeling_software == 'Labelme':
@@ -68,7 +68,8 @@ def ProcessSingleJson_Detect(labelme_path, save_folder='../../labels', Labeling_
 
 
 # 函数 处理单个labelme标注json文件(关键点算法)
-def ProcessSingleJson_Pose(labelme_path, save_folder='../../labelsPose', Labeling_software='Labelme'):
+def ProcessSingleJson_Pose(labelme_path, bbox_classes, keypoint_classes, save_folder='../../labelsPose', Labeling_software='Labelme'):
+
     file_name, file_extension = os.path.splitext(labelme_path)
     if(file_extension != '.json'):
         print('{} 不是json文件'.format(labelme_path))
@@ -90,7 +91,7 @@ def ProcessSingleJson_Pose(labelme_path, save_folder='../../labelsPose', Labelin
                 yolo_str = ''
                 ## 框的信息
                 # 框的类别 ID
-                bbox_class_id = bbox_class[each_ann['label']]
+                bbox_class_id = bbox_classes[each_ann['label']]
                 yolo_str += '{} '.format(bbox_class_id)
                 # 左上角和右下角的 XY 像素坐标
                 if Labeling_software == 'Labelme':
@@ -132,7 +133,7 @@ def ProcessSingleJson_Pose(labelme_path, save_folder='../../labelsPose', Labelin
                             bbox_keypoints_dict[label] = [x, y]
 
                 ## 把关键点按顺序排好
-                for each_class in keypoint_class: # 遍历每一类关键点
+                for each_class in keypoint_classes: # 遍历每一类关键点
                     if each_class in bbox_keypoints_dict:
                         keypoint_x_norm = bbox_keypoints_dict[each_class][0] / img_width
                         keypoint_y_norm = bbox_keypoints_dict[each_class][1] / img_height
@@ -147,7 +148,7 @@ def ProcessSingleJson_Pose(labelme_path, save_folder='../../labelsPose', Labelin
     return 1
 
 # 函数 处理单个labelme标注json文件(分割算法)
-def ProcessSingleJson_Seg(labelme_path, save_folder='../../labelsSeg'):
+def ProcessSingleJson_Seg(labelme_path, bbox_classes, save_folder='../../labelsSeg'):
     file_name, file_extension = os.path.splitext(labelme_path)
     if file_extension != '.json':
         print(f'{labelme_path} 不是json文件')
@@ -161,15 +162,55 @@ def ProcessSingleJson_Seg(labelme_path, save_folder='../../labelsSeg'):
 
     # 生成 YOLO 格式的 txt 文件
     # suffix = labelme_path.split('.')[-2]
+    yolo_txt_path = os.path.join(save_folder, f"{file_name}.txt")
+
+    with open(yolo_txt_path, 'w', encoding='utf-8') as f:
+        for each_ann in labelme['shapes']: # 遍历每个标注
+            if each_ann['shape_type'] == 'polygon' and each_ann['label'] in bbox_classes:
+                # 处理外接矩形
+                rect_label = each_ann['label']
+                #外接矩形类别
+                bbox_class_id = bbox_classes[rect_label]
+                # 按YOLO分割格式写入文件
+                # 格式: [class_id] [x1] [y1] [x2] [y2] [x3] [y3] [x4] [y4]
+                line_content = []
+                line_content.append(f'{bbox_class_id}')
+                for point in each_ann['points']:
+                    x = point[0] / img_width
+                    y = point[1] / img_height
+                    line_content.append(f'{x:.5f}')
+                    line_content.append(f'{y:.5f}')
+                f.write(" ".join(line_content) + '\n')
+    return 1
+
+# 函数 处理单个labelme标注json文件(分割算法),二维码标注项目
+def ProcessSingleJson_Seg_forQRDM(labelme_path, bbox_classes, save_folder='../../labelsSeg'):
+    file_name, file_extension = os.path.splitext(labelme_path)
+    if file_extension != '.json':
+        print(f'{labelme_path} 不是json文件')
+        return 0
+
+    error_folder = Path(str(save_folder).replace("labels", "error"))
+    if not os.path.exists(error_folder):
+        os.mkdir(error_folder)
+    
+    with open(labelme_path, 'r', encoding='utf-8') as f:
+        labelme = json.load(f)
+
+    img_width = labelme['imageWidth']   # 图像宽度
+    img_height = labelme['imageHeight'] # 图像高度
+
+    # 生成 YOLO 格式的 txt 文件
+    # suffix = labelme_path.split('.')[-2]
     yolo_txt_path = file_name + '.txt'
     need = 1
 
     with open(yolo_txt_path, 'w', encoding='utf-8') as f:
         for each_ann in labelme['shapes']: # 遍历每个标注
-            if each_ann['shape_type'] == 'rectangle' and each_ann['label'] in bbox_class:
+            if each_ann['shape_type'] == 'rectangle' and each_ann['label'] in bbox_classes:
                 # 处理外接矩形
                 rect_label = each_ann['label']
-                bbox_class_id = bbox_class[rect_label]
+                bbox_class_id = bbox_classes[rect_label]
 
                 # 获取矩形坐标
                 rect_points = each_ann['points']
@@ -211,12 +252,12 @@ def ProcessSingleJson_Seg(labelme_path, save_folder='../../labelsSeg'):
                 else:
                     need = 0
                     print(f"警告: rectangle_{labelme_path} 中矩形 {rect_label} 的关键点数量不是4个,跳过转换")
-                    break 
-            if each_ann['shape_type'] == 'polygon' and each_ann['label'] in bbox_class:
+                    continue #原数据和crop数据
+            if each_ann['shape_type'] == 'polygon' and each_ann['label'] in bbox_classes:
                 # 处理外接矩形
                 rect_label = each_ann['label']
                 #外接矩形类别
-                bbox_class_id = bbox_class[rect_label]
+                bbox_class_id = bbox_classes[rect_label]
 
                 #获取多边形的坐标
                 polygon_points=np.array(each_ann['points'],dtype=np.float32)
@@ -269,17 +310,10 @@ def ProcessSingleJson_Seg(labelme_path, save_folder='../../labelsSeg'):
         return 1
     else:
         print(f"no convert: {labelme_path}")
+        shutil.move(yolo_txt_path, error_folder)
         return 0
 
-
-def convert_YOLOPose2HCSeg(yolo_pose_path, save_folder):
-    # # 定义外接矩形类别映射
-    # bbox_class = {
-    #     'QRrect': 0,
-    #     'QRrect_DM': 0,
-    #     'QRrect_QR': 1
-    # }
-
+def convert_YOLOPose2HCSeg(yolo_pose_path, bbox_classes, save_folder):
     file_name, file_extension = os.path.splitext(yolo_pose_path)
     if(file_extension != '.json'):
         # print('{} 不是json文件'.format(labelme_path))
@@ -313,10 +347,10 @@ def convert_YOLOPose2HCSeg(yolo_pose_path, save_folder):
 
     for shape in yolo_data["shapes"]:
         # 处理外接矩形（用于确定类别）
-        if shape["shape_type"] == "rectangle" and shape["label"] in bbox_class:
+        if shape["shape_type"] == "rectangle" and shape["label"] in bbox_classes:
             current_qr_id += 1
             qr_instances[current_qr_id] = {
-                "category": bbox_class[shape["label"]],
+                "category": bbox_classes[shape["label"]],
                 "points": {}
             }
 
@@ -374,35 +408,40 @@ def convert_YOLOPose2HCSeg(yolo_pose_path, save_folder):
 if __name__ == '__main__':
 
 
-    ## Detect: 线束端子
+    # ## Detect: 线束端子
+    # BoxClass = {
+    #     'JPYJ':4 ,  #胶皮压脚有无检测
+    #     'JPCD':3 ,  #胶皮长度检测
+    #     'JPCT':2 ,  #胶皮出头检测
+    #     'XXYJ':1 ,  #线芯压脚检测
+    #     'XXCT':0 ,  #线芯出头有无检测
+    #     'FS'  :5 ,  #飞丝检测
+    #     'FSS' :6 ,  #防水栓检测
+    # }
 
-    bbox_class = {
-        'JPYJ':4 ,  #胶皮压脚有无检测
-        'JPCD':3 ,  #胶皮长度检测
-        'JPCT':2 ,  #胶皮出头检测
-        'XXYJ':1 ,  #线芯压脚检测
-        'XXCT':0 ,  #线芯出头有无检测
-        'FS'  :5 ,  #飞丝检测
-        'FSS' :6 ,  #防水栓检测
-    }
+    # ## InsSegment: 胶壳
+    # InsSegmentClass = {
+    #     'JK':0 ,  #胶壳
+    # }
 
 
     ## Pose: 二维码QR、DM
     # 框的类别
-    bbox_class = {
+    BoxClass = {
         'QRrect':0 , 
         'QRrect_DM':0 , 
         'QRrect_QR':1 ,
-        'QRrect_BAR':2
+        'QRrect_BAR':2,
+        'ORrect_BAR':2
     }
-    # 关键点的类别
-    keypoint_class = ['QRpoint_1', 'QRpoint_2', 'QRpoint_3', 'QRpoint_4']
+    # # 关键点的类别
+    # KeypointClass = ['QRpoint_1', 'QRpoint_2', 'QRpoint_3', 'QRpoint_4']
 
 
 
     # 数据集文件夹名称
-    Labeling_software = 'XAnyLabeling'  ## 'Labelme'  'XAnyLabeling'
-    Dataset_root = Path(r'E:\铭\workspace\线束\data\Data\dataset\train\images_zyd')  #Path(r'D:\HCAI\Result\Project\Prj007_实例分割_二维码\inputImages')  #r'E:\work\Data\QR'  
+    Labeling_software = 'Labelme'  ## 'Labelme'  'XAnyLabeling'
+    Dataset_root = Path(r'E:\work\Data\QRDM\datasets_bac\dataset_cls3_20250818\rotate')  #Path(r'D:\HCAI\Result\Project\Prj007_实例分割_二维码\inputImages')  #r'E:\work\Data\QR'  
     labelme_json_path = Dataset_root.joinpath('jsons')
     # labelme_json_path = Dataset_root
     yolo_txt_path = Dataset_root.joinpath('labels')
@@ -415,10 +454,11 @@ if __name__ == '__main__':
     num = 0
     for labelme_path in os.listdir():
         try:
-            num += ProcessSingleJson_Detect(labelme_path, save_folder=yolo_txt_path, Labeling_software = Labeling_software)
-            # num += ProcessSingleJson_Pose(labelme_path, save_folder=yolo_txt_path, Labeling_software = Labeling_software)
-            # num += ProcessSingleJson_Seg(labelme_path, save_folder=yolo_txt_path)
-            # num += convert_YOLOPose2HCSeg(labelme_path, save_folder=yolo_seg_path)
+            # num += ProcessSingleJson_Detect(labelme_path, bbox_classes=BoxClass, save_folder=yolo_txt_path, Labeling_software = Labeling_software)
+            # num += ProcessSingleJson_Pose(labelme_path, bbox_classes=BoxClass, keypoint_classes=KeypointClass, save_folder=yolo_txt_path, Labeling_software = Labeling_software)
+            num += ProcessSingleJson_Seg_forQRDM(labelme_path, bbox_classes=BoxClass, save_folder=yolo_txt_path)
+            # num += ProcessSingleJson_Seg(labelme_path, bbox_classes=InsSegmentClass, save_folder=yolo_txt_path)
+            # num += convert_YOLOPose2HCSeg(labelme_path, bbox_classes=BoxClass, save_folder=yolo_seg_path)
         except:
             print('******有误******', labelme_path)
     print('YOLO格式的txt标注文件已保存至: ', yolo_txt_path)
