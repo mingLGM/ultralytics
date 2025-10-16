@@ -38,7 +38,7 @@ YOLO12 introduces an attention-centric architecture that departs from the tradit
 - **Enhanced Efficiency**: Achieves higher accuracy with fewer parameters compared to many prior models, demonstrating an improved balance between speed and accuracy.
 - **Flexible Deployment**: Designed for deployment across diverse platforms, from edge devices to cloud infrastructure.
 
-![YOLO12 comparison visualization](https://github.com/user-attachments/assets/8009d90f-b43c-4a96-bb89-47ef843e7144)
+![YOLO12 comparison visualization](https://github.com/ultralytics/docs/releases/download/0/yolo12-comparison-visualization.avif)
 
 ## Supported Tasks and Modes
 
@@ -58,13 +58,17 @@ YOLO12 demonstrates significant [accuracy](https://www.ultralytics.com/glossary/
 
 ### Detection Performance (COCO val2017)
 
-| Model                                                                                | size<br><sup>(pixels) | mAP<sup>val<br>50-95 | Speed<br><sup>CPU ONNX<br>(ms) | Speed<br><sup>T4 TensorRT<br>(ms) | params<br><sup>(M) | FLOPs<br><sup>(B) | Comparison<br><sup>(mAP/Speed) |
-| ------------------------------------------------------------------------------------ | --------------------- | -------------------- | ------------------------------ | --------------------------------- | ------------------ | ----------------- | ------------------------------ |
-| [YOLO12n](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12n.pt) | 640                   | 40.6                 | -                              | 1.64                              | 2.6                | 6.5               | +2.1%/-9% (vs. YOLOv10n)       |
-| [YOLO12s](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12s.pt) | 640                   | 48.0                 | -                              | 2.61                              | 9.3                | 21.4              | +0.1%/+42% (vs. RT-DETRv2)     |
-| [YOLO12m](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12m.pt) | 640                   | 52.5                 | -                              | 4.86                              | 20.2               | 67.5              | +1.0%/-3% (vs. YOLO11m)        |
-| [YOLO12l](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12l.pt) | 640                   | 53.7                 | -                              | 6.77                              | 26.4               | 88.9              | +0.4%/-8% (vs. YOLO11l)        |
-| [YOLO12x](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12x.pt) | 640                   | 55.2                 | -                              | 11.79                             | 59.1               | 199.0             | +0.6%/-4% (vs. YOLO11x)        |
+!!! tip "Performance"
+
+    === "Detection (COCO)"
+
+        | Model                                                                                | size<br><sup>(pixels) | mAP<sup>val<br>50-95 | Speed<br><sup>CPU ONNX<br>(ms) | Speed<br><sup>T4 TensorRT<br>(ms) | params<br><sup>(M) | FLOPs<br><sup>(B) | Comparison<br><sup>(mAP/Speed) |
+        | ------------------------------------------------------------------------------------ | --------------------- | -------------------- | ------------------------------ | --------------------------------- | ------------------ | ----------------- | ------------------------------ |
+        | [YOLO12n](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12n.pt) | 640                   | 40.6                 | -                              | 1.64                              | 2.6                | 6.5               | +2.1%/-9% (vs. YOLOv10n)       |
+        | [YOLO12s](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12s.pt) | 640                   | 48.0                 | -                              | 2.61                              | 9.3                | 21.4              | +0.1%/+42% (vs. RT-DETRv2)     |
+        | [YOLO12m](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12m.pt) | 640                   | 52.5                 | -                              | 4.86                              | 20.2               | 67.5              | +1.0%/-3% (vs. YOLO11m)        |
+        | [YOLO12l](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12l.pt) | 640                   | 53.7                 | -                              | 6.77                              | 26.4               | 88.9              | +0.4%/-8% (vs. YOLO11l)        |
+        | [YOLO12x](https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo12x.pt) | 640                   | 55.2                 | -                              | 11.79                             | 59.1               | 199.0             | +0.6%/-4% (vs. YOLO11x)        |
 
 - Inference speed measured on an NVIDIA T4 GPU with TensorRT FP16 [precision](https://www.ultralytics.com/glossary/precision).
 - Comparisons show the relative improvement in mAP and the percentage change in speed (positive indicates faster; negative indicates slower). Comparisons are made against published results for YOLOv10, YOLO11, and RT-DETR where available.
@@ -109,19 +113,16 @@ The examples below focus on YOLO12 [Detect](../tasks/detect.md) models (for obje
 ## Key Improvements
 
 1. **Enhanced [Feature Extraction](https://www.ultralytics.com/glossary/feature-extraction)**:
-
     - **Area Attention**: Efficiently handles large [receptive fields](https://www.ultralytics.com/glossary/receptive-field), reducing computational cost.
     - **Optimized Balance**: Improved balance between attention and feed-forward network computations.
     - **R-ELAN**: Enhances feature aggregation using the R-ELAN architecture.
 
 2. **Optimization Innovations**:
-
     - **Residual Connections**: Introduces residual connections with scaling to stabilize training, especially in larger models.
     - **Refined Feature Integration**: Implements an improved method for feature integration within R-ELAN.
     - **FlashAttention**: Incorporates FlashAttention to reduce memory access overhead.
 
 3. **Architectural Efficiency**:
-
     - **Reduced Parameters**: Achieves a lower parameter count while maintaining or improving accuracy compared to many previous models.
     - **Streamlined Attention**: Uses a simplified attention implementation, avoiding positional encoding.
     - **Optimized MLP Ratios**: Adjusts MLP ratios to more effectively allocate computational resources.
@@ -172,7 +173,7 @@ YOLO12 is a versatile model that supports a wide range of core computer vision t
 
 ### How does YOLO12 compare to other YOLO models and competitors like RT-DETR?
 
-YOLO12 demonstrates significant accuracy improvements across all model scales compared to prior YOLO models like YOLOv10 and YOLOv11, with some trade-offs in speed compared to the _fastest_ prior models. For example, YOLO12n achieves a +2.1% mAP improvement over YOLOv10n and +1.2% over YOLOv11n on the COCO val2017 dataset. Compared to models like [RT-DETR](https://docs.ultralytics.com/compare/yolov8-vs-rtdetr/), YOLO12s offers a +1.5% mAP improvement and a substantial +42% speed increase. These metrics highlight YOLO12's strong balance between accuracy and efficiency. See the [performance metrics section](#performance-metrics) for detailed comparisons.
+YOLO12 demonstrates significant accuracy improvements across all model scales compared to prior YOLO models like YOLOv10 and YOLO11, with some trade-offs in speed compared to the _fastest_ prior models. For example, YOLO12n achieves a +2.1% mAP improvement over YOLOv10n and +1.2% over YOLO11n on the COCO val2017 dataset. Compared to models like [RT-DETR](https://docs.ultralytics.com/models/rtdetr/), YOLO12s offers a +1.5% mAP improvement and a substantial +42% speed increase. These metrics highlight YOLO12's strong balance between accuracy and efficiency. See the [performance metrics section](#performance-metrics) for detailed comparisons.
 
 ### What are the hardware requirements for running YOLO12, especially for using FlashAttention?
 
