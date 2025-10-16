@@ -53,64 +53,64 @@ if __name__ == '__main__':
     
     
     
-    # # #任务: QR码
-    # # #pt转onnx
-    # temp_dir = Path(r'E:\work\code\ultralytics\project\QRDM_yolov8Seg_M1_n320_cls2\Ftrain1.0\weights')
-    # temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
-    # # model = YOLO(temp_pt_path, task='segment')  #'segment'  'pose'
-    # # model.export(format='onnx', opset=10, simplify=True)  # , simplify=True
-    
-    # # ##onnx转openvino
-    # temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
-    # xml_path_file = temp_onnx_path.with_suffix('.xml')
-    # bin_path_file = temp_onnx_path.with_suffix('.bin')
-    # # temp_ov_model = ov.convert_model(temp_onnx_path)
-    # # ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=True)
-    
-    # # ## openvino加密 
-    # # hcov_path_file = xml_path_file.with_suffix('.hcir')
-    # # encrypt_files(xml_path_file, bin_path_file, hcov_path_file)
-    # # # decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
-    
-    
-    
-    
-    
-    # 铭的任务: 布缝、线束等
-    ##pt转onnx
-    temp_dir = Path(r'E:\work\code\ultralytics\project\xianshu_jiaoke_yolov11s640_cls-1\train_1.0\weights')
+    # #任务: QR码
+    # #pt转onnx
+    temp_dir = Path(r'E:\work\code\ultralytics\project\QRDM_yolov8Seg_M1_n640_cls3\Ftrain_1.0\weights')
     temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
-    model = YOLO(temp_pt_path, task='segment')  ##'detect' 'segment' 
-    model.export(format='onnx', opset=10)
+    model = YOLO(temp_pt_path, task='segment')  #'segment'  'pose'
+    model.export(format='onnx', opset=10, simplify=True)  # , simplify=True
     
-    
-    # #onnx转OV
+    # ##onnx转openvino
     temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
     xml_path_file = temp_onnx_path.with_suffix('.xml')
-    bin_path_file = str(xml_path_file).replace('.xml', '.bin')
+    bin_path_file = temp_onnx_path.with_suffix('.bin')
     temp_ov_model = ov.convert_model(temp_onnx_path)
     ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=True)
     
-    
-    ##OV加密
-    # #### HC加密
-    # # from comutils.simplecrypto import MultiFileEncryption, FileEncryption
-    # # dataset_dir = r"E:\work\Data\bufeng_2"
-    # # out_path_file = str(xml_path_file).replace('.xml', '.engineOV')
-    # # encry = None
-    # # if Path(dataset_dir + '/labelinfo/Categories.json').exists():
-    # #     encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file), 'categories':dataset_dir + '/labelinfo/Categories.json'})
-    # #     encry.add_buffer({"UseModelName": "detection_yolo11"})  #"detection_yolov5", "detection_yolov8", "detection_yolo11"
-    # # else:
-    # #     encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file)})
-    # # chiper_buffer = encry()
-    # # if chiper_buffer is not None:
-    # #     with open(out_path_file, 'wb') as f:
-    # #         f.write(chiper_buffer)
-    #### ming加密
-    hcov_path_file = xml_path_file.with_suffix('.EngineOV')
+    ## openvino加密 
+    hcov_path_file = xml_path_file.with_suffix('.hcir')
     encrypt_files(xml_path_file, bin_path_file, hcov_path_file)
     # decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
+    
+    
+    
+    
+    
+    # # 铭的任务: 布缝、线束等
+    # ##pt转onnx
+    # temp_dir = Path(r'E:\work\code\ultralytics\project\xianshu_jiaoke_yolov11s320_cls-1\train_1.0\weights')
+    # temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
+    # model = YOLO(temp_pt_path, task='segment')  ##'detect' 'segment' 
+    # model.export(format='onnx', opset=10)
+    
+    
+    # # #onnx转OV
+    # temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
+    # xml_path_file = temp_onnx_path.with_suffix('.xml')
+    # bin_path_file = str(xml_path_file).replace('.xml', '.bin')
+    # temp_ov_model = ov.convert_model(temp_onnx_path)
+    # ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=True)
+    
+    
+    # ##OV加密
+    # # #### HC加密
+    # # # from comutils.simplecrypto import MultiFileEncryption, FileEncryption
+    # # # dataset_dir = r"E:\work\Data\bufeng_2"
+    # # # out_path_file = str(xml_path_file).replace('.xml', '.engineOV')
+    # # # encry = None
+    # # # if Path(dataset_dir + '/labelinfo/Categories.json').exists():
+    # # #     encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file), 'categories':dataset_dir + '/labelinfo/Categories.json'})
+    # # #     encry.add_buffer({"UseModelName": "detection_yolo11"})  #"detection_yolov5", "detection_yolov8", "detection_yolo11"
+    # # # else:
+    # # #     encry = MultiFileEncryption({'model_xml':str(xml_path_file), 'model_bin':str(bin_path_file)})
+    # # # chiper_buffer = encry()
+    # # # if chiper_buffer is not None:
+    # # #     with open(out_path_file, 'wb') as f:
+    # # #         f.write(chiper_buffer)
+    # #### ming加密
+    # hcov_path_file = xml_path_file.with_suffix('.EngineOV')
+    # encrypt_files(xml_path_file, bin_path_file, hcov_path_file)
+    # # decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
     
     
     
