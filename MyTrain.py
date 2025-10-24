@@ -1,4 +1,5 @@
 from ultralytics import YOLO
+from ultralytics import RTDETR
 
 if __name__ == "__main__":
     
@@ -45,16 +46,16 @@ if __name__ == "__main__":
     # # model.val(data=data_yaml, imgsz=640) 
     
     
-    #任务: 线束胶壳——“实例分割”
-    model_yaml = r"yolo11s-seg.yaml"
-    data_yaml  = r"xianshu_jiaoke_Inseg.yaml"
-    pre_model  = r'yolo11s-seg.pt' #r"yolo11m-pose.pt"  #r"yolo11s.pt"
-    model = YOLO(model_yaml)
-    model = YOLO(pre_model, task="segment")
-    model.train(data=data_yaml, lr0=0.001, lrf=0.01, cos_lr=True,  epochs=500, patience=0, batch=8, imgsz=640, save=True, save_period=50, device="0", workers=4, mask_ratio = 1,
-                project='./project/xianshu_jiaoke_yolov11s640_cls-1', name='train_1.0', optimizer='AdamW', warmup_epochs = 5, amp=True, close_mosaic=10, multi_scale = True)  
-        # muti_scale：图片会有多种shape传入网络，训练效果更好，但是很耗显存
-    model.val(data=data_yaml, imgsz=640) 
+    # #任务: 线束胶壳——“实例分割”
+    # model_yaml = r"yolo11s-seg.yaml"
+    # data_yaml  = r"xianshu_jiaoke_Inseg.yaml"
+    # pre_model  = r'yolo11s-seg.pt' #r"yolo11m-pose.pt"  #r"yolo11s.pt"
+    # model = YOLO(model_yaml)
+    # model = YOLO(pre_model, task="segment")
+    # model.train(data=data_yaml, lr0=0.001, lrf=0.01, cos_lr=True,  epochs=500, patience=0, batch=8, imgsz=640, save=True, save_period=50, device="0", workers=4, mask_ratio = 1,
+    #             project='./project/xianshu_jiaoke_yolov11s640_cls-1', name='train_1.0', optimizer='AdamW', warmup_epochs = 5, amp=True, close_mosaic=10, multi_scale = True)  
+    #     # muti_scale：图片会有多种shape传入网络，训练效果更好，但是很耗显存
+    # model.val(data=data_yaml, imgsz=640) 
     
     
     
@@ -96,6 +97,17 @@ if __name__ == "__main__":
     #     # muti_scale：图片会有多种shape传入网络，训练效果更好，但是很耗显存
     # model.val(data=data_yaml, imgsz=320) 
     
+    
+    
+    #### RT-DETR
+    model_yaml = r"rtdetr-l_zhitong.yaml"
+    data_yaml  = r"zhitong_RTDETR.yaml"
+    pre_model  = r'rtdetr-l.pt'
+    model = RTDETR(model_yaml)
+    model = RTDETR(pre_model)
+    model.info()
+    results = model.train(data=data_yaml, lr0=0.0001, lrf=0.01, weight_decay=0.0001, cos_lr=True, epochs=500, patience=0, batch=4, imgsz=640, device="0", save=True, workers=8,
+                        project='./project/RTDETR_zhitong', name='v1.0', optimizer='AdamW', warmup_epochs = 5, amp=True, close_mosaic=10)
     
     
     
