@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 import os
-
+import time
 import cv2
 import numpy as np
 import onnxruntime as ort
@@ -176,7 +176,8 @@ class RTDETR:
         img = cv2.cvtColor(self.img, cv2.COLOR_BGR2RGB)
 
         # Resize the image to match the input shape
-        img = cv2.resize(img, (self.input_width, self.input_height))
+        # img = cv2.resize(img, (self.input_width, self.input_height))
+        img, pad = self.letterbox(img, (self.input_width, self.input_height))
 
         # Normalize the image data by dividing it by 255.0
         image_data = np.array(img) / 255.0
@@ -187,7 +188,36 @@ class RTDETR:
         # Expand the dimensions of the image data to match the expected input shape
         image_data = np.expand_dims(image_data, axis=0).astype(np.float32)
 
-        return image_data
+        return image_data, pad
+
+    def letterbox(self, img: np.ndarray, new_shape: tuple[int, int] = (640, 640)) -> tuple[np.ndarray, tuple[int, int]]:
+        """
+        Resize and reshape images while maintaining aspect ratio by adding padding.
+
+        Args:
+            img (np.ndarray): Input image to be resized.
+            new_shape (tuple[int, int]): Target shape (height, width) for the image.
+
+        Returns:
+            img (np.ndarray): Resized and padded image.
+            pad (tuple[int, int]): Padding values (top, left) applied to the image.
+        """
+        shape = img.shape[:2]  # current shape [height, width]
+
+        # Scale ratio (new / old)
+        r = min(new_shape[0] / shape[0], new_shape[1] / shape[1])
+
+        # Compute padding
+        new_unpad = round(shape[1] * r), round(shape[0] * r)
+        dw, dh = (new_shape[1] - new_unpad[0]) / 2, (new_shape[0] - new_unpad[1]) / 2  # wh padding
+
+        if shape[::-1] != new_unpad:  # resize
+            img = cv2.resize(img, new_unpad, interpolation=cv2.INTER_LINEAR)
+        top, bottom = round(dh - 0.1), round(dh + 0.1)
+        left, right = round(dw - 0.1), round(dw + 0.1)
+        img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=(114, 114, 114))
+
+        return img, (top, left)
 
     def bbox_cxcywh_to_xyxy(self, boxes: np.ndarray) -> np.ndarray:
         """
@@ -264,7 +294,7 @@ class RTDETR:
             (np.ndarray): Output image with detection annotations including bounding boxes and class labels.
         """
         # Preprocess the image for model input
-        image_data = self.preprocess()
+        image_data, pad = self.preprocess()
 
         # Run the model inference
         model_output = self.session.run(None, {self.model_input[0].name: image_data})
@@ -280,13 +310,39 @@ if __name__ == "__main__":
     parser.add_argument("--img", type=str, default="bus.jpg", help="Path to the input image.")
     parser.add_argument("--conf-thres", type=float, default=0.5, help="Confidence threshold for object detection.")
     parser.add_argument("--iou-thres", type=float, default=0.5, help="IoU threshold for non-maximum suppression.")
+    parser.add_argument("--class_names", type=str, default="ultralytics/refs/heads/main/ultralytics/cfg/datasets/coco8.yaml", help="class_______")
     args = parser.parse_args()
 
     # Create the detector instance with specified parameters
-    detection = RTDETR(args.model, args.img, args.conf_thres, args.iou_thres)
+    detection = RTDETR(args.model, args.img, args.conf_thres, args.iou_thres, args.class_names)
 
     # Perform detection and get the output image
     output_image = detection.main()
+    
+    # num_runs = 10
+    # times = []
+
+    # for i in range(num_runs):
+    #     start_time = time.perf_counter()  # 更高精度的时间函数
+        
+    #     output_image = detection.main()
+        
+    #     end_time = time.perf_counter()
+
+    #     inference_time = (end_time - start_time) * 1000  # 毫秒
+    #     times.append(inference_time)
+
+    #     if (i + 1) % 10 == 0:
+    #         print(f"已完成 {i+1}/{num_runs} 次推理")
+    # # 统计分析
+    # times_array = np.array(times)
+    # print(f"\n=== RT-DETR 推理耗时统计 ===")
+    # print(f"测试次数: {num_runs}")
+    # print(f"平均耗时: {np.mean(times_array):.2f} ± {np.std(times_array):.2f} ms")
+    # print(f"最快耗时: {np.min(times_array):.2f} ms")
+    # print(f"最慢耗时: {np.max(times_array):.2f} ms")
+    # print(f"中位数: {np.median(times_array):.2f} ms")
+    # print(f"FPS: {1000/np.mean(times_array):.2f}")
 
     # Display the annotated output image
     cv2.namedWindow("Output", cv2.WINDOW_NORMAL)

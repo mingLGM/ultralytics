@@ -41,8 +41,8 @@ if __name__ == "__main__":
     # pre_model  = r"yolo11s.pt"  #r"yolo11s.pt"
     # model = YOLO(model_yaml)
     # model = YOLO(pre_model, task="detect")
-    # model.train(data=data_yaml, lr0=0.001,  epochs=500, patience=0, batch=8, imgsz=640, save=True, save_period=50, device="0", workers=4,
-    #             project='./project/xianshu_yolov11s640_cls-7', name='v1.0', optimizer='AdamW', warmup_epochs = 5, cos_lr=True, amp=True, close_mosaic=10, multi_scale = True) 
+    # model.train(data=data_yaml, lr0=0.001,  epochs=500, patience=0, batch=8, imgsz=640, save=True, save_period=50, device="0", workers=0,
+    #             project='./project/xianshu_yolov11s640_cls-7', name='test', optimizer='AdamW', warmup_epochs = 5, cos_lr=True, amp=True, close_mosaic=10, multi_scale = True) 
     # # model.val(data=data_yaml, imgsz=640) 
     
     
@@ -99,18 +99,19 @@ if __name__ == "__main__":
     
     
     
-    #### RT-DETR
-    model_yaml = r"rtdetr-l_zhitong.yaml"
-    data_yaml  = r"zhitong_RTDETR.yaml"
+    ## 欧普-黑点项目
+    ### RT-DETR
+    model_yaml = r"rtdetr-l.yaml"
+    data_yaml  = r"xz_RTDETR.yaml"  
     pre_model  = r'rtdetr-l.pt'
     model = RTDETR(model_yaml)
     model = RTDETR(pre_model)
     model.info()
-    results = model.train(data=data_yaml, lr0=0.0001, lrf=0.01, weight_decay=0.0001, cos_lr=True, epochs=500, patience=0, batch=4, imgsz=640, device="0", save=True, workers=8,
-                        project='./project/RTDETR_zhitong', name='v1.0', optimizer='AdamW', warmup_epochs = 5, amp=True, close_mosaic=10)
-    
-    
-    
+    results = model.train(data=data_yaml, lr0=0.0001, lrf=0.01, weight_decay=0.0005, cos_lr=True, epochs=100, patience=0, batch=4, imgsz=320, device="0", save=True, workers=0,
+                        project='./project/RTDETR_xz', name='test', optimizer='AdamW', warmup_epochs = 5, amp=True, close_mosaic=10, multi_scale = True, translate= 0.1)
+    # model.val(data=data_yaml, imgsz=640) 
+
+
     
     # model = YOLO("yolo11m.pt")
     # # model = YOLO("yolov8m.yaml")  # build a new model from scratch

@@ -8,6 +8,7 @@ from pathlib import Path
 from comutils.simplecrypto import MultiFileEncryption, FileEncryption
 from comutils.My_simplecrypto import encrypt_files, decrypt_files
 # from openvino.tools.mo import convert_model
+from ultralytics import RTDETR
 
 
 def export_hc_pt(yolo_pt:str):
@@ -40,6 +41,17 @@ if __name__ == '__main__':
     # model.export(format='onnx', opset=10)
     
     
+    temp_pt_path  = r'rtdetr-x.pt'
+    # temp_dir = Path(r'D:\HCAI\Result\Project\Prj000_检测形状\models\exp4')
+    # temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
+    model = RTDETR(temp_pt_path)
+    # model.export(format='onnx', opset=16, simplify=True, dynamic=False, half=False)
+    
+    # state_dict = model.state_dict()
+    # model_dict = {'model': state_dict}
+    # torch.save(model_dict, 'our.pt')
+    
+    
     # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # model = torch.load(r'E:\work\code\ultralytics\zhitong_yolov8l\v2.1\train\weights\best.pt', map_location=device)
     # model["model"].eval()
@@ -53,24 +65,24 @@ if __name__ == '__main__':
     
     
     
-    # #任务: QR码
-    # #pt转onnx
-    temp_dir = Path(r'E:\work\code\ultralytics\project\QRDM_yolov8Seg_M1_n640_cls3\Ftrain_1.0\weights')
-    temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
-    model = YOLO(temp_pt_path, task='segment')  #'segment'  'pose'
-    model.export(format='onnx', opset=10, simplify=True)  # , simplify=True
+    # # #任务: QR码
+    # # #pt转onnx
+    # temp_dir = Path(r'E:\work\code\ultralytics\project\QRDM_yolov8Seg_M1_n640_cls3\Ftrain_1.0\weights')
+    # temp_pt_path = temp_dir.joinpath(os.path.basename("best.pt"))
+    # model = YOLO(temp_pt_path, task='segment')  #'segment'  'pose'
+    # model.export(format='onnx', opset=10, simplify=True)  # , simplify=True
     
-    # ##onnx转openvino
-    temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
-    xml_path_file = temp_onnx_path.with_suffix('.xml')
-    bin_path_file = temp_onnx_path.with_suffix('.bin')
-    temp_ov_model = ov.convert_model(temp_onnx_path)
-    ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=True)
+    # # ##onnx转openvino
+    # temp_onnx_path = temp_dir.joinpath(os.path.basename("best.onnx"))
+    # xml_path_file = temp_onnx_path.with_suffix('.xml')
+    # bin_path_file = temp_onnx_path.with_suffix('.bin')
+    # temp_ov_model = ov.convert_model(temp_onnx_path)
+    # ov.save_model(temp_ov_model, output_model=xml_path_file, compress_to_fp16=True)
     
-    ## openvino加密 
-    hcov_path_file = xml_path_file.with_suffix('.hcir')
-    encrypt_files(xml_path_file, bin_path_file, hcov_path_file)
-    # decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
+    # ## openvino加密 
+    # hcov_path_file = xml_path_file.with_suffix('.hcir')
+    # encrypt_files(xml_path_file, bin_path_file, hcov_path_file)
+    # # decrypt_files(hcov_path_file, xml_path_file, bin_path_file)
     
     
     
